@@ -5,9 +5,54 @@ const urlShortnerController = require("../controllers/url-shortner.controller");
 const { responseHandler } = require("../helpers/response-handler");
 const urlShortnerValidator = require("../validate/url-shortner.validate");
 const { shortenUrlLimiter } = require("../middlewares/rate-limiter");
+
 const router = Router();
 
-// API to Create a Short URL
+/**
+ * @swagger
+ * /api/shorten:
+ *   post:
+ *     summary: Create a short URL
+ *     description: Generates a short URL from a long URL, with an optional custom alias and topic.
+ *     tags:
+ *       - URL Shortener
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               longUrl:
+ *                 type: string
+ *                 example: "https://example.com"
+ *               customAlias:
+ *                 type: string
+ *                 example: "mycustomalias"
+ *               topic:
+ *                 type: string
+ *                 example: "tech"
+ *     responses:
+ *       201:
+ *         description: Short URL created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 shortUrl:
+ *                   type: string
+ *                   example: "http://short.ly/abc123"
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid request or custom alias already exists
+ *       401:
+ *         description: Unauthorized - Invalid or missing access token
+ */
 router.post(
   "/api/shorten",
   shortenUrlLimiter,
@@ -17,7 +62,31 @@ router.post(
   responseHandler
 );
 
-// Redirect API: Lookup and Redirect to Long URL
+/**
+ * @swagger
+ * /api/shorten/{alias}:
+ *   get:
+ *     summary: Redirect to original URL
+ *     description: Retrieves the original long URL for a given short alias and redirects the user.
+ *     tags:
+ *       - URL Shortener
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: alias
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The short alias for the URL
+ *     responses:
+ *       307:
+ *         description: Redirects to the original long URL
+ *       404:
+ *         description: Short URL not found
+ *       401:
+ *         description: Unauthorized - Invalid or missing access token
+ */
 router.get(
   "/api/shorten/:alias",
   checkAccessToken,

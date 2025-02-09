@@ -11,6 +11,7 @@ const {
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const axios = require("axios");
+const { commonErrorHandler } = require("../helpers/error-handler");
 
 const getGoogleAuthUrl = async (req, res, next) => {
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=profile email`;
@@ -73,7 +74,9 @@ const userRegisterAndLogin = async (req, res, next) => {
   } catch (error) {
     await executeQuery("ROLLBACK");
     console.log("loginUser error:", error);
-    res.redirect("/auth/google");
+    const statusCode = error.statusCode || 500;
+    commonErrorHandler(req, res, error.message, statusCode, error);
+    
   }
 };
 

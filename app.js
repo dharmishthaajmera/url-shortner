@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
 const { commonErrorHandler } = require("./src/helpers/error-handler");
+const swaggerDocs = require("./src/swagger");
 
 const app = express();
 app.use(express.json());
@@ -26,6 +27,8 @@ app.use(authRouter);
 app.use(urlShortner);
 
 app.use(urlAnalytics);
+
+swaggerDocs(app);
 
 app.use("/health", (_req, res) => {
   res.send({ message: "Application running successfully!" });
