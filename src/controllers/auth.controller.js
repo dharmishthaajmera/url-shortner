@@ -55,8 +55,9 @@ const userRegisterAndLogin = async (req, res, next) => {
     }
 
     // Generate tokens
-    const { accessToken, refreshToken, expiry_time } =
-      generateTokens(userDetails[0]);
+    const { accessToken, refreshToken, expiry_time } = await generateTokens(
+      userDetails[0]
+    );
 
     // Store refresh token in DB
     await executeQuery(INSERT_AUTH_TOKEN, [sub, refreshToken, expiry_time]);

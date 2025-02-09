@@ -1,7 +1,12 @@
 const analyticsServices = require("../services/analytics.service");
 const { commonErrorHandler } = require("../helpers/error-handler");
+const { fetchFromCache, saveToCache } = require("../middlewares/redis-cache");
 
 const getUrlAnalytics = async (req, res, next) => {
+  const cacheKey = req.originalUrl;
+  const isCached = await fetchFromCache(cacheKey, res);
+  if (isCached) return;
+  
   const { alias } = req.params;
 
   try {
@@ -13,6 +18,8 @@ const getUrlAnalytics = async (req, res, next) => {
 
     req.statusCode = 200;
     req.data = result;
+
+    saveToCache(cacheKey, result);
     next();
   } catch (error) {
     console.log("Error fetching URL analytics:", error);
@@ -22,6 +29,10 @@ const getUrlAnalytics = async (req, res, next) => {
 };
 
 const getTopicAnalytics = async (req, res, next) => {
+  const cacheKey = req.originalUrl;
+  const isCached = await fetchFromCache(cacheKey, res);
+  if (isCached) return;
+
   const { topic } = req.params;
 
   try {
@@ -33,6 +44,8 @@ const getTopicAnalytics = async (req, res, next) => {
 
     req.statusCode = 200;
     req.data = result;
+
+    saveToCache(cacheKey, result);
     next();
   } catch (error) {
     console.log("Error fetching topic analytics:", error);
@@ -42,13 +55,18 @@ const getTopicAnalytics = async (req, res, next) => {
 };
 
 const getOverallAnalytics = async (req, res, next) => {
-  const userId = "112540772628843966080"; // Assuming user ID is available from authentication middleware
+  const userId = req.user.userId; 
+  const cacheKey = req.originalUrl + `:${userId}`;
+  const isCached = await fetchFromCache(cacheKey, res);
+  if (isCached) return;
 
   try {
     const result = await analyticsServices.fetchOverallAnalytics(userId);
 
     req.statusCode = 200;
     req.data = result;
+
+    saveToCache(cacheKey, result);
     next();
   } catch (error) {
     console.log("Error fetching overall analytics:", error);

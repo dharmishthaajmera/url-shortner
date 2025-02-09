@@ -4,7 +4,7 @@ const analyticsController = require("../controllers/analytics.controller");
 const { responseHandler } = require("../helpers/response-handler");
 const { checkAccessToken } = require("../middlewares/authenticate");
 const analyticsValidator = require("../validate/analytics.validate");
-const { urlAnalyticsLimiter } = require("../helpers/rate-limiter");
+const { urlAnalyticsLimiter } = require("../middlewares/rate-limiter");
 
 const router = Router();
 
@@ -13,7 +13,6 @@ router.get(
   "/api/analytics/overall",
   urlAnalyticsLimiter,
   checkAccessToken,
-  analyticsValidator.overallAnalytics,
   analyticsController.getOverallAnalytics,
   responseHandler
 );

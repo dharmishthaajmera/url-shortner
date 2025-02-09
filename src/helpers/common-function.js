@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 // Function to generate JWT tokens
-function generateTokens(user) {
+const generateTokens = async (user) => {
   const { user_id, email } = user;
 
   const accessToken = jwt.sign(
@@ -20,6 +20,6 @@ function generateTokens(user) {
   const expiry_time = new Date(date.setDate(date.getDate() + 7));
 
   return { accessToken, refreshToken, expiry_time };
-}
+};
 
 module.exports = { generateTokens };

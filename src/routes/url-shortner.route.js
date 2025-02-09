@@ -4,7 +4,7 @@ const { checkAccessToken } = require("../middlewares/authenticate");
 const urlShortnerController = require("../controllers/url-shortner.controller");
 const { responseHandler } = require("../helpers/response-handler");
 const urlShortnerValidator = require("../validate/url-shortner.validate");
-const { shortenUrlLimiter } = require("../helpers/rate-limiter");
+const { shortenUrlLimiter } = require("../middlewares/rate-limiter");
 const router = Router();
 
 // API to Create a Short URL
