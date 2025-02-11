@@ -21,6 +21,9 @@ module.exports = {
 
   GET_DISTINCT_USERCOUNT_FOR_URL: `SELECT COUNT(DISTINCT ip_address) FROM url_analytics WHERE alias = $1`,
 
+  GET_ALIAS_FOR_USER:
+    "SELECT alias FROM short_urls INNER JOIN user_details ON short_urls.user_id = user_details.user_id WHERE user_details.user_id = $1",
+
   GET_CLICK_COUNT_FOR_PAST_SEVEN_DAYS: `SELECT DATE(timestamp) as date, COUNT(*) as click_count 
     FROM url_analytics 
     WHERE alias = $1 AND timestamp > NOW() - INTERVAL '7 days' 
@@ -43,24 +46,25 @@ module.exports = {
     SELECT short_urls.alias, long_url, COUNT(*) AS total_clicks, COUNT(DISTINCT ip_address) AS unique_users
     FROM short_urls
     LEFT JOIN url_analytics ON short_urls.alias = url_analytics.alias
-    WHERE topic = $1
+    WHERE short_urls.topic = $1
+    AND short_urls.user_id = $2
     GROUP BY short_urls.alias, long_url
-`,
+    `,
 
   GET_CLICKS_BY_DATE_FOR_TOPIC_QUERY: `
     SELECT DATE(timestamp) as date, COUNT(*) as click_count
     FROM url_analytics
-    WHERE alias IN (SELECT alias FROM short_urls WHERE topic = $1)
+    WHERE alias IN (SELECT alias FROM short_urls WHERE topic = $1 AND user_id = $2)
     AND timestamp > NOW() - INTERVAL '7 days'
     GROUP BY DATE(timestamp)
     ORDER BY date DESC
-`,
+    `,
 
   GET_URLS_BY_USER_QUERY: `
   SELECT short_urls.alias, COUNT(*) AS total_clicks, COUNT(DISTINCT ip_address) AS unique_users
   FROM short_urls
   LEFT JOIN url_analytics ON short_urls.alias = url_analytics.alias
-  WHERE user_id = $1
+  WHERE short_urls.user_id = $1
   GROUP BY short_urls.alias
 `,
 

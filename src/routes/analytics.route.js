@@ -5,6 +5,7 @@ const { responseHandler } = require("../helpers/response-handler");
 const { checkAccessToken } = require("../middlewares/authenticate");
 const analyticsValidator = require("../validate/analytics.validate");
 const { urlAnalyticsLimiter } = require("../middlewares/rate-limiter");
+const { checkAliasOwnership } = require("../middlewares/authorize");
 
 const router = Router();
 
@@ -185,6 +186,7 @@ router.get(
   urlAnalyticsLimiter,
   checkAccessToken,
   analyticsValidator.aliasAnalytics,
+  checkAliasOwnership,
   analyticsController.getUrlAnalytics,
   responseHandler
 );
