@@ -1,7 +1,8 @@
+require("dotenv").config();
 const redis = require("redis");
 
 const client = redis.createClient({
-  port:process.env.REDIS_SERVER_PORT,
+  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_SERVER_PORT}`,
 });
 
 // Function to initialize Redis connection

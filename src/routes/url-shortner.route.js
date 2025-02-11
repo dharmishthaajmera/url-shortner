@@ -27,13 +27,13 @@ const router = Router();
  *             properties:
  *               longUrl:
  *                 type: string
- *                 example: "https://example.com"
+ *                 example: "<your_long_url>"
  *               customAlias:
  *                 type: string
- *                 example: "mycustomalias"
+ *                 example: "<your_custom_alias>"
  *               topic:
  *                 type: string
- *                 example: "tech"
+ *                 example: "<your_topic>"
  *     responses:
  *       201:
  *         description: Short URL created successfully
@@ -42,17 +42,25 @@ const router = Router();
  *             schema:
  *               type: object
  *               properties:
- *                 shortUrl:
+ *                 message:
  *                   type: string
- *                   example: "http://short.ly/abc123"
- *                 createdAt:
- *                   type: string
- *                   format: date-time
+ *                   example: "Success"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     shortUrl:
+ *                       type: string
+ *                       example: "<generated_short_url>"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "<timestamp>"
  *       400:
  *         description: Invalid request or custom alias already exists
  *       401:
  *         description: Unauthorized - Invalid or missing access token
  */
+
 router.post(
   "/api/shorten",
   shortenUrlLimiter,
@@ -67,7 +75,7 @@ router.post(
  * /api/shorten/{alias}:
  *   get:
  *     summary: Redirect to original URL
- *     description: Retrieves the original long URL for a given short alias and redirects the user.
+ *     description: Retrieves the original long URL for a given short alias and redirects the user. (swagger does not support redirect response)
  *     tags:
  *       - URL Shortener
  *     security:
@@ -89,7 +97,6 @@ router.post(
  */
 router.get(
   "/api/shorten/:alias",
-  checkAccessToken,
   urlShortnerValidator.urlAlias,
   urlShortnerController.getUrlAlias
 );

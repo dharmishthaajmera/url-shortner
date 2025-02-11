@@ -13,7 +13,7 @@ const router = Router();
  * /api/analytics/overall:
  *   get:
  *     summary: Get overall analytics
- *     description: Retrieves overall analytics for the authenticated user, including total URL visits and trends.
+ *     description: Retrieves overall analytics for the authenticated user, including total URL visits, trends, and user engagement data.
  *     tags:
  *       - Analytics
  *     security:
@@ -25,17 +25,68 @@ const router = Router();
  *           application/json:
  *             schema:
  *               type: object
- *               example:
- *                 totalUrls: 10
- *                 totalVisits: 500
- *                 topVisitedUrls:
- *                   - alias: "abc123"
- *                     visits: 120
- *                   - alias: "xyz789"
- *                     visits: 80
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Success"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalUrls:
+ *                       type: integer
+ *                       example: 2
+ *                     totalClicks:
+ *                       type: integer
+ *                       example: 3
+ *                     uniqueUsers:
+ *                       type: integer
+ *                       example: 2
+ *                     clicksByDate:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           date:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2025-02-09T18:30:00.000Z"
+ *                           click_count:
+ *                             type: string
+ *                             example: "1"
+ *                     osType:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           os_name:
+ *                             type: string
+ *                             nullable: true
+ *                             example: null
+ *                           unique_users:
+ *                             type: string
+ *                             example: "1"
+ *                           unique_clicks:
+ *                             type: string
+ *                             example: "3"
+ *                     deviceType:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           device_name:
+ *                             type: string
+ *                             nullable: true
+ *                             example: null
+ *                           unique_users:
+ *                             type: string
+ *                             example: "1"
+ *                           unique_clicks:
+ *                             type: string
+ *                             example: "3"
  *       401:
  *         description: Unauthorized - Invalid or missing access token
  */
+
 router.get(
   "/api/analytics/overall",
   urlAnalyticsLimiter,
@@ -49,7 +100,7 @@ router.get(
  * /api/analytics/{alias}:
  *   get:
  *     summary: Get analytics for a specific short URL
- *     description: Retrieves analytics for a specific short URL alias, including visit count and geolocation data.
+ *     description: Retrieves analytics for a specific short URL alias, including total clicks, unique users, device types, and OS statistics.
  *     tags:
  *       - Analytics
  *     security:
@@ -68,19 +119,67 @@ router.get(
  *           application/json:
  *             schema:
  *               type: object
- *               example:
- *                 alias: "abc123"
- *                 totalVisits: 150
- *                 geolocation:
- *                   - country: "US"
- *                     visits: 90
- *                   - country: "IN"
- *                     visits: 60
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Success"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalClicks:
+ *                       type: integer
+ *                       example: 1
+ *                     uniqueUsers:
+ *                       type: integer
+ *                       example: 1
+ *                     clicksByDate:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           date:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2025-02-09T18:30:00.000Z"
+ *                           click_count:
+ *                             type: string
+ *                             example: "1"
+ *                     osType:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           os_name:
+ *                             type: string
+ *                             nullable: true
+ *                             example: null
+ *                           unique_users:
+ *                             type: string
+ *                             example: "1"
+ *                           unique_clicks:
+ *                             type: string
+ *                             example: "1"
+ *                     deviceType:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           device_name:
+ *                             type: string
+ *                             nullable: true
+ *                             example: null
+ *                           unique_users:
+ *                             type: string
+ *                             example: "1"
+ *                           unique_clicks:
+ *                             type: string
+ *                             example: "1"
  *       404:
  *         description: Short URL not found
  *       401:
  *         description: Unauthorized - Invalid or missing access token
  */
+
 router.get(
   "/api/analytics/:alias",
   urlAnalyticsLimiter,
@@ -95,7 +194,7 @@ router.get(
  * /api/analytics/topic/{topic}:
  *   get:
  *     summary: Get topic-based analytics
- *     description: Retrieves analytics for a specific topic, showing total visits and most popular URLs.
+ *     description: Retrieves analytics for a specific topic, including total clicks, unique users, and URL visit statistics.
  *     tags:
  *       - Analytics
  *     security:
@@ -114,19 +213,51 @@ router.get(
  *           application/json:
  *             schema:
  *               type: object
- *               example:
- *                 topic: "tech"
- *                 totalVisits: 300
- *                 topUrls:
- *                   - alias: "tech123"
- *                     visits: 120
- *                   - alias: "dev456"
- *                     visits: 80
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Success"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalClicks:
+ *                       type: integer
+ *                       example: 100
+ *                     uniqueUsers:
+ *                       type: integer
+ *                       example: 50
+ *                     clicksByDate:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           date:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "YYYY-MM-DDTHH:MM:SSZ"
+ *                           click_count:
+ *                             type: integer
+ *                             example: 10
+ *                     urls:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           shortUrl:
+ *                             type: string
+ *                             example: "http://short.url/example"
+ *                           totalClicks:
+ *                             type: integer
+ *                             example: 100
+ *                           uniqueUsers:
+ *                             type: integer
+ *                             example: 50
  *       404:
  *         description: Topic not found
  *       401:
  *         description: Unauthorized - Invalid or missing access token
  */
+
 router.get(
   "/api/analytics/topic/:topic",
   urlAnalyticsLimiter,

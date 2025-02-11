@@ -13,7 +13,13 @@ const urlShortner = require("./src/routes/url-shortner.route");
 const urlAnalytics = require("./src/routes/analytics.route");
 
 // Enable cors support to accept cross origin requests
-app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
 // Enable helmet js middlewares to configure secure headers
 app.use(helmet());
@@ -21,14 +27,14 @@ app.use(helmet());
 // Enable gzip compression module for REST API
 app.use(compression());
 
+swaggerDocs(app);
+
 // REST API entry point
 app.use(authRouter);
 
 app.use(urlShortner);
 
 app.use(urlAnalytics);
-
-swaggerDocs(app);
 
 app.use("/health", (_req, res) => {
   res.send({ message: "Application running successfully!" });

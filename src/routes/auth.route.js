@@ -11,7 +11,7 @@ const {
  * /auth/google:
  *   get:
  *     summary: Get Google OAuth URL
- *     description: Redirects the user to Google's OAuth authentication page.
+ *     description: Redirects the user to Google's OAuth authentication page. (swagger does not support redirect response)
  *     tags:
  *       - Authentication
  *     responses:
@@ -25,7 +25,7 @@ router.get("/auth/google", getGoogleAuthUrl);
  * /auth/google/callback:
  *   get:
  *     summary: Google OAuth Callback
- *     description: Handles the OAuth response from Google, registers or logs in the user, and sets authentication tokens.
+ *     description: Handles the OAuth response from Google, registers or logs in the user, and sets authentication tokens. (swagger does not support redirect response)
  *     tags:
  *       - Authentication
  *     parameters:

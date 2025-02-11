@@ -2,7 +2,6 @@ const { nanoid } = require("nanoid");
 const {
   GET_URL_BY_CUSTOM_ALIAS,
   INSERT_SHORTEN_URL,
-  GET_ALIAS_COUNT_FOR_USER_FOR_LONG_URL,
   INSERT_URL_ANALYTICS_ON_ACCESS,
 } = require("../helpers/queries");
 const { executeQuery } = require("../../db-connect");
@@ -34,23 +33,7 @@ const generateShortUrl = async (req, res, next) => {
       }
     }
 
-    // Check if there are already 5 aliases for the same long URL and topic for this user
-    const aliasCount = await executeQuery(
-      GET_ALIAS_COUNT_FOR_USER_FOR_LONG_URL,
-      [longUrl, topic, userId]
-    );
-    
-
-    if (aliasCount[0].aliascount >= 5) {
-      await executeQuery("ROLLBACK");
-      return res.status(400).json({
-        error:
-          "You cannot create more than 5 aliases for the same long URL and topic",
-      });
-    }
-
     // Insert into database
-
     const result = await executeQuery(INSERT_SHORTEN_URL, [
       longUrl,
       shortCode || null,
@@ -80,10 +63,7 @@ const getUrlAlias = async (req, res, next) => {
 
   try {
     // Find the original URL
-    const result = await executeQuery(
-      GET_URL_BY_CUSTOM_ALIAS,
-      [alias]
-    );
+    const result = await executeQuery(GET_URL_BY_CUSTOM_ALIAS, [alias]);
 
     if (result.length === 0) {
       return res.status(404).json({ error: "Short URL not found" });
@@ -101,17 +81,14 @@ const getUrlAlias = async (req, res, next) => {
     }
 
     // Log the redirect event in analytics
-    await executeQuery(
-      INSERT_URL_ANALYTICS_ON_ACCESS,
-      [
-        alias,
-        userIP || "unknown",
-        userAgent || "unknown",
-        geoData.country || "unknown",
-        geoData.region || "unknown",
-        geoData.city || "unknown",
-      ]
-    );
+    await executeQuery(INSERT_URL_ANALYTICS_ON_ACCESS, [
+      alias,
+      userIP || "unknown",
+      userAgent || "unknown",
+      geoData.country || "unknown",
+      geoData.region || "unknown",
+      geoData.city || "unknown",
+    ]);
 
     // Redirect user to original long URL
     res.redirect(307, longUrl);
