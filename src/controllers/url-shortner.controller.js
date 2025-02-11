@@ -7,6 +7,7 @@ const {
 const { executeQuery } = require("../../db-connect");
 const { commonErrorHandler } = require("../helpers/error-handler");
 const { default: axios } = require("axios");
+const { fetchFromCache, saveToCache } = require("../middlewares/redis-cache");
 
 const generateShortUrl = async (req, res, next) => {
   const userId = req.user.userId;
@@ -57,6 +58,9 @@ const generateShortUrl = async (req, res, next) => {
 };
 
 const getUrlAlias = async (req, res, next) => {
+  const cacheKey = req.originalUrl;
+  const isCached = await fetchFromCache(cacheKey, res);
+  if (isCached) return;
   const { alias } = req.params;
   const userAgent = req.headers["user-agent"];
   const userIP = req.headers["x-forwarded-for"] || req.socket.remoteAddress; // Get user IP
@@ -90,6 +94,7 @@ const getUrlAlias = async (req, res, next) => {
       geoData.city || "unknown",
     ]);
 
+    saveToCache(cacheKey, longUrl);
     // Redirect user to original long URL
     res.redirect(307, longUrl);
   } catch (error) {
