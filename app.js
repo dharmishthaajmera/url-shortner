@@ -37,7 +37,7 @@ app.use(urlShortner);
 app.use(urlAnalytics);
 
 app.use("/health", (_req, res) => {
-  res.send({ message: "Application running successfully!" });
+  res.status(200).send({ message: "Application running successfully!" });
 });
 
 // 404 Error Handling
