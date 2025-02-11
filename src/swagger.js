@@ -10,11 +10,6 @@ const options = {
       version: "1.0.0",
       description: "API documentation for the URL Shortener service",
     },
-    servers: [
-      {
-        url: "http://localhost:3001",
-      },
-    ],
     components: {
       securitySchemes: {
         BearerAuth: {
