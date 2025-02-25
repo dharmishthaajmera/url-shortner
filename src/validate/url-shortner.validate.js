@@ -30,8 +30,8 @@ const urlAlias = async (req, res, next) => {
       alias: yup
         .string()
         .matches(
-          /^[a-zA-Z0-9_-]{3,20}$/,
-          "Alias must be between 3-20 characters and can contain letters, numbers, hyphens, and underscores"
+          /^[a-zA-Z0-9_-]{3,100}$/,
+          "Alias must be between 3-100 characters and can contain letters, numbers, hyphens, and underscores"
         )
         .required("Alias is required"),
     }),
