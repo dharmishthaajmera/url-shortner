@@ -186,7 +186,7 @@ router.get(
   urlAnalyticsLimiter,
   checkAccessToken,
   analyticsValidator.aliasAnalytics,
-  checkAliasOwnership,
+  // checkAliasOwnership,
   analyticsController.getUrlAnalytics,
   responseHandler
 );

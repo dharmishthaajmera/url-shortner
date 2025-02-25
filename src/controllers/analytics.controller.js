@@ -6,7 +6,7 @@ const getUrlAnalytics = async (req, res, next) => {
   const cacheKey = req.originalUrl;
   const isCached = await fetchFromCache(cacheKey, res);
   if (isCached) return;
-  
+
   const { alias } = req.params;
 
   try {
@@ -36,7 +36,10 @@ const getTopicAnalytics = async (req, res, next) => {
   const { topic } = req.params;
 
   try {
-    const result = await analyticsServices.fetchTopicAnalytics(topic);
+    const result = await analyticsServices.fetchTopicAnalytics(
+      topic,
+      req.user.userId
+    );
 
     if (!result) {
       return res.status(404).json({ error: "Topic not found" });
@@ -55,7 +58,7 @@ const getTopicAnalytics = async (req, res, next) => {
 };
 
 const getOverallAnalytics = async (req, res, next) => {
-  const userId = req.user.userId; 
+  const userId = req.user.userId;
   const cacheKey = req.originalUrl + `:${userId}`;
   const isCached = await fetchFromCache(cacheKey, res);
   if (isCached) return;

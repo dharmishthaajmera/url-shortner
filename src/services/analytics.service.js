@@ -50,7 +50,7 @@ const fetchUrlAnalytics = async (alias) => {
   };
 };
 
-const fetchTopicAnalytics = async (topic) => {
+const fetchTopicAnalytics = async (topic,userId) => {
   // Fetch URLs under the topic
   const urlsQuery = GET_URLS_BY_TOPIC_QUERY;
 
@@ -59,8 +59,8 @@ const fetchTopicAnalytics = async (topic) => {
 
   // Execute all queries in parallel
   const [urlsResult, clicksByDateResult] = await Promise.all([
-    executeQuery(urlsQuery, [topic]),
-    executeQuery(clicksByDateQuery, [topic]),
+    executeQuery(urlsQuery, [topic, userId]),
+    executeQuery(clicksByDateQuery, [topic, userId]),
   ]);
 
   return {
