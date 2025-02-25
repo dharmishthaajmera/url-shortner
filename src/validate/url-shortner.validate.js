@@ -11,8 +11,8 @@ const shortenUrl = async (req, res, next) => {
       customAlias: yup
         .string()
         .matches(
-          /^[a-zA-Z0-9_-]{3,20}$/,
-          "Custom alias must be between 3-20 characters and can contain letters, numbers, hyphens, and underscores"
+          /^[a-zA-Z0-9_-]{3,100}$/,
+          "Custom alias must be between 3-100 characters and can contain letters, numbers, hyphens, and underscores"
         )
         .notRequired(),
       topic: yup
